@@ -1,0 +1,115 @@
+
+
+<!doctype html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <meta charset="utf-8">
+  <title>Office2PDF</title>
+	<style>
+		body {
+			font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,Arial,sans-serif;
+			margin: 0;
+			padding: 0;
+      font-size: 16px;
+		}
+    .container {
+      max-width: 970px;
+      padding: 15px;
+      margin: auto;
+    }
+    p {
+      margin-bottom: 2em;
+    }
+
+    input,select {
+      font-size: 16px;
+      padding: 4px 0;
+    }
+    button {
+      padding: 4px 20px;
+    }
+    td {
+      padding: 24px 6px ;
+    }
+
+    .cell {
+      padding: 12px 16px;
+      border: 1px solid #ccc;
+      margin-bottom: 24px;
+    }
+	</style>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+</head>
+
+<body>
+	<div id="app" class="container">
+    <div class="cell">
+      <table>
+        <tr>
+          <td>
+            Office File
+          </td>
+          <td>
+            <input type="file" accept=".doc,.docx,.ppt,.pptx,.xls,.xlsx" id="input-file-select">
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><button @click="startConvert">Convert</button></td>
+        </tr>
+      </table>
+    </div>
+    <div class="cell" v-if="output.url">
+      <ul>
+        <li>
+          <a :href="output.url" :download="output.name">{{output.name}}</a>
+        </li>
+      </ul>
+    </div>
+	</div>
+
+<script>
+
+
+var app = new Vue({
+  el: '#app',
+  data() {
+    return {
+      output: {}
+    };
+  },
+  methods: {
+    startConvert() {
+      this.output = [];
+      const el = document.querySelector('#input-file-select');
+
+      if (el.files.length < 1) {
+        alert('Please select file');
+        return;
+      }
+      this.requestServer(el.files[0]);
+    },
+    async requestServer(file) {
+      const outName = `${file.name}.pdf`;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const resp = await fetch('/office2pdf', {
+        method: 'POST',
+        body: formData
+      });
+      const blob = await resp.blob();
+
+      this.output = {
+        name: outName,
+        url: URL.createObjectURL(blob)
+      };
+    }
+  }
+})
+</script>
+</body>
+
+</html>
