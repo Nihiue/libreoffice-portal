@@ -39,27 +39,38 @@ function libreConvert(source, outdir) {
   });
 }
 
+function tryUnlink(filePath) {
+  try {
+    fs.unlinkSync(filePath);
+    return true;
+  } catch (e) {
+    console.log('unlink failed', filePath);
+    return false;
+  }
+}
+
 async function convertOfficeToPdf(filePath, origName) {
   const tmpDir = '/tmp';
   const batchId = randomStr();
 
   const inputFile = path.join(tmpDir, `${batchId}${path.extname(origName)}`);
   const outputFile = path.join(tmpDir, `${batchId}.pdf`);
-
-  fs.renameSync(filePath, inputFile);
-  await libreConvert(inputFile, tmpDir);
-
-  const ret = fs.readFileSync(outputFile);
-
+  const now = Date.now();
   try {
-    fs.unlinkSync(inputFile);
-    fs.unlinkSync(outputFile);
-  } catch(e) {
-    console.log('unbale to clean files', batchId);
+    fs.renameSync(filePath, inputFile);
+    await libreConvert(inputFile, tmpDir);
+    const ret = fs.readFileSync(outputFile);
+    console.log(`time: ${Date.now() - now}ms`);
+    return ret;
+  } catch (e) {
+    throw e;
+  } finally {
+    tryUnlink(inputFile);
+    tryUnlink(outputFile);
   }
-  return ret;
 }
 
 module.exports = {
-  convertOfficeToPdf
+  convertOfficeToPdf,
+  tryUnlink
 };

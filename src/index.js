@@ -5,7 +5,7 @@ const koaBody = require('koa-body');
 const path = require('path');
 const fs = require('fs');
 
-const { convertOfficeToPdf } = require('./lib');
+const { convertOfficeToPdf, tryUnlink } = require('./lib');
 
 const app = new Koa();
 const router = new Router();
@@ -27,6 +27,8 @@ router.post('/office2pdf', async (ctx, next) => {
   if (!extReg.test(fileObj.name)) {
     ctx.body = 'invalid file format';
     ctx.status = 400;
+    tryUnlink(fileObj.path);
+    return;
   }
 
   try {
@@ -38,13 +40,14 @@ router.post('/office2pdf', async (ctx, next) => {
     ctx.status = 400;
     console.log(e);
   }
-
 });
 
-app.use(koaBody({multipart:true}));
+app.use(koaBody({
+  multipart:true
+}));
 
 app.use(router.routes())
   .use(router.allowedMethods());
 
 app.listen(8000);
-console.log('libre portal running...');
+console.log('libre portal running on port 8000...');
