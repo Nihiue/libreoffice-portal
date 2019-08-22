@@ -100,12 +100,18 @@ var app = new Vue({
         method: 'POST',
         body: formData
       });
-      const blob = await resp.blob();
 
-      this.output = {
-        name: outName,
-        url: URL.createObjectURL(blob)
-      };
+      if (resp.ok) {
+        const blob = await resp.blob();
+
+        this.output = {
+          name: outName,
+          url: URL.createObjectURL(blob)
+        };
+      } else {
+        alert(`Error: ${resp.text()}`);
+      }
+
     }
   }
 })
