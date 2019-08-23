@@ -31,9 +31,9 @@ function libreConvert(source, outdir) {
     shell.on('exit', function (code, signal) {
       console.log(rawData.trim());
       if (code === 0) {
-        resolve();
+        resolve(true);
       } else {
-        reject();
+        reject(`libreoffice exit with code ${code}`);
       }
     });
   });
