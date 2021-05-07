@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 # tuna mirror
-COPY sources.list /etc/apt/sources.list
+# COPY sources.list /etc/apt/sources.list
 
 # install libreoffice
 RUN apt-get update
