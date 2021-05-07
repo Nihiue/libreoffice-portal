@@ -6,7 +6,7 @@ Format convert service based on LibreOffice on Linux.
 
 ```
 $ sudo docker pull nihiue/libreoffice-portal
-$ sudo docker run -d -p 3000:3000 --restart=always --name libreoffice-portal
+$ sudo docker run -d -p 3000:3000 --restart=always --name portal nihiue/libreoffice-portal
 ```
 
 ## Usage
