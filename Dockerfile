@@ -10,12 +10,14 @@ RUN apt-get -y -q remove libreoffice-gnome
 
 # install node.js
 RUN apt-get install -y curl
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
 
-COPY . /root/workspace/libre-portal
-RUN cd /root/workspace/libre-portal&&npm install
 
-ENTRYPOINT ["node",  "/root/workspace/libre-portal/src/index.js"]
+WORKDIR /root/workspace/libre-portal
+COPY . .
+RUN npm install
+
+ENTRYPOINT ["node",  "./src/index.js"]
 
 EXPOSE 3000
